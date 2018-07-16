@@ -1,27 +1,3 @@
-# MIT License
-#
-# Copyright (c) 2018 Nicholas Springer & Jeffrey De La Mare
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
-# Utilities
-
 import hashlib
 import subprocess
 import sys
@@ -46,7 +22,6 @@ from sawtooth_sdk.protobuf.batch_pb2 import BatchList
 
 from protobuf.payload_pb2 import *
 from protobuf.project_node_pb2 import *
-from protobuf.sprint_node_pb2 import *
 from protobuf.task_pb2 import *
 import addressing
 
@@ -195,37 +170,6 @@ class Todo():
         batch_list_bytes = self.create_batch(signer)
         send_it(batch_list_bytes)
 
-    def increment_sprint(self, args):
-        ''' Creates a transaction that includes an increment_sprint payload
-
-            args: [password/signer, project_name]
-        '''
-        if not len(args) == 2: # make sure correct number of arguments are present for desired transaction
-            print("\nIncorrect number of arguments for desired command.\n")
-            quit()
-
-        #create signer using given private key
-        signer = args[0]
-
-        # bundle the action information
-        action = IncrementSprintAction(
-                project_name = args[1],
-        )
-        # bundle the payload
-        payload = Payload(
-            action = 4,
-            timestamp = _get_time(),
-            increment_sprint = action,
-        )
-
-        # serialize/encode before sending
-        payload_bytes = payload.SerializeToString()
-
-        # Pack it all up and ship it out
-        self.create_transaction(signer, payload_bytes)
-        batch_list_bytes = self.create_batch(signer)
-        send_it(batch_list_bytes)
-
     def add_user(self, args):
         ''' Creates a transaction that includes an add_user payload
 
@@ -245,7 +189,7 @@ class Todo():
         )
         # bundle the payload
         payload = Payload(
-            action = 5,
+            action = 4,
             timestamp = _get_time(),
             add_user = action,
         )
@@ -277,7 +221,7 @@ class Todo():
         )
         # bundle the payload
         payload = Payload(
-            action = 6,
+            action = 5,
             timestamp = _get_time(),
             remove_user = action,
         )
@@ -361,24 +305,18 @@ class Todo():
         # gets project node from state
         project_node = getProjectNode(state,project_name)
         print('+++++++++++++++++++++Project:' + project_name + '+++++++++++++++++++++')
-        print("<<<<<<<<<<<<Public Keys:>>>>>>>>>>>>")
+        print("<<<<<<<<<<<Public Keys:>>>>>>>>>>>>")
         # print all authorized public keys
         for public_key in project_node.public_keys:
             print(public_key)
         print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>")
-        current_sprint = project_node.current_sprint
-        # print all sprints and tasks in the sprints
-        for sprint in range(0,current_sprint+1):
-            print('=================Sprint '+ str(sprint) + '=================')
-            sprint_node = getSprintNode(state,project_name,sprint)
-            for task_name in sprint_node.task_names:
-                task = getTask(state,project_name,sprint,task_name)
-                print("------------Task------------")
-                print("Task_name: " + task.task_name)
-                print('Description: ' + task.description)
-                print('Progress: ' + str(task.progress))
-                print('---------------------------')
-            print ("====================================================")
+        for task_name in project_node.task_names:
+            task = getTask(state,project_name,task_name)
+            print("------------Task------------")
+            print("Task_name: " + task.task_name)
+            print('Description: ' + task.description)
+            print('Progress: ' + str(task.progress))
+            print('---------------------------')
         print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
     def add_password(self, args):
@@ -430,7 +368,7 @@ def send_it(batch_list_bytes):
     print(status)
 
 def getProjectNode(state,project_name):
-    ''' Given a project name and sprint name get a sprint node. '''
+    ''' Given a project name get a project node. '''
 
     # make address of project metanode
     project_node_address = addressing.make_project_node_address(project_name)
@@ -443,25 +381,11 @@ def getProjectNode(state,project_name):
             return project_node
     return None
 
-def getSprintNode(state,project_name,sprint):
-    ''' Given a project name and sprint name get a sprint node. '''
-
-    # make address of sprint metanode
-    sprint_node_address = addressing.make_sprint_node_address(project_name, str(sprint))
-    sprint_node_container = SprintNodeContainer()
-    data = getData(state,sprint_node_address)
-    sprint_node_container.ParseFromString(data)  # decode data and store in container
-
-    for sprint_node in sprint_node_container.entries:  # find project with correct name
-        if sprint_node.project_name == project_name:
-            return sprint_node
-    return None
-
-def getTask(state,project_name,sprint,task_name):
-    ''' Given a project name, sprint, and task name get a task node. '''
+def getTask(state,project_name,task_name):
+    ''' Given a project name and task name get a task node. '''
 
     # make address of task node
-    task_address = addressing.make_task_address(project_name,sprint,task_name)
+    task_address = addressing.make_task_address(project_name,task_name)
     task_container = TaskContainer()
     data = getData(state,task_address)
     task_container.ParseFromString(data)  # decode data and store in container
