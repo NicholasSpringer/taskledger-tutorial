@@ -202,37 +202,6 @@ class Todo():
         batch_list_bytes = self.create_batch(signer)
         send_it(batch_list_bytes)
 
-    def remove_user(self, args):
-        ''' Creates a transaction that includes a remove_user payload
-
-            args: [password/signer, project_name, public_key]
-        '''
-        if not len(args) == 3: # make sure correct number of arguments are present for desired transaction
-            print("\nIncorrect number of arguments for desired command.\n")
-            quit()
-
-        #create signer using given private key
-        signer = args[0]
-
-        # bundle the action information
-        action = RemoveUserAction(
-                project_name = args[1],
-                public_key = args[2],
-        )
-        # bundle the payload
-        payload = Payload(
-            action = 5,
-            timestamp = _get_time(),
-            remove_user = action,
-        )
-
-        # serialize/encode before sending
-        payload_bytes = payload.SerializeToString()
-
-        # Pack it all up and ship it out
-        self.create_transaction(signer, payload_bytes)
-        batch_list_bytes = self.create_batch(signer)
-        send_it(batch_list_bytes)
 
     def create_transaction(self, signer, payload_bytes):
         '''Bundles together a transaction that includes the given payload and is signed by given signer'''
@@ -332,20 +301,6 @@ class Todo():
         priv_key = hashlib.sha224(new_pass.encode('utf-8')).hexdigest()
         args[2] = _create_signer(priv_key).pubkey.serialize().hex()
         self.add_user(args)
-
-    def remove_password(self, args):
-        ''' Takes authorized signer and password to be removed from auth users.
-            
-            args: [password (is a signer), removed_password]
-        '''
-        if not len(args) == 3: # make sure correct number of arguments are present for desired transaction
-            print("\nIncorrect number of arguments for desired command.\n")
-            quit()
-        #creates public key from password
-        new_pass = args[2]
-        priv_key = hashlib.sha224(new_pass.encode('utf-8')).hexdigest()
-        args[2] = _create_signer(priv_key).pubkey.serialize().hex()
-        self.remove_user(args)
 
 
 def send_it(batch_list_bytes):
