@@ -32,7 +32,7 @@ def _get_time():
     return int(time.time())
 
 def _create_signer(private_key):
-    signer = secp256k1.PrivateKey(privkey=bytes.fromhex(str(private_key+'00000000')))
+    signer = secp256k1.PrivateKey(privkey=bytes.fromhex(str(private_key)))
     return signer
     
 
@@ -374,7 +374,7 @@ todo = Todo()
 args = sys.argv[1:]
 passcode = args[1]
 
-priv_key = hashlib.sha224(passcode.encode('utf-8')).hexdigest()
+priv_key = hashlib.sha256(passcode.encode('utf-8')).hexdigest()
 args[1] = _create_signer(priv_key)
 # run desired function
 getattr(todo, args[0])(args[1:])
