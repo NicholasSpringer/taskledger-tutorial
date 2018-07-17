@@ -7,7 +7,6 @@ message Payload {
     PROGRESS_TASK = 2;
     EDIT_TASK = 3;
     ADD_USER = 4;
-    REMOVE_USER = 5;
   }
 
   // An action tells the handler which function
