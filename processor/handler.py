@@ -89,7 +89,7 @@ def _create_project(payload, signer, timestamp, state):
 
 def _create_task(payload, signer, timestamp, state):
     ''' Creates a task node and adds the task to the project's list of task names
-    
+
         Takes a task_name and description.  Makes an address given the project
         name and the task name. Each task name must be unique in the
         project.
@@ -184,7 +184,7 @@ def _progress_task(payload, signer, timestamp, state):
 
 
 def _edit_task(payload, signer, timestamp, state):
-    ''' Edit a task's description is things change.
+    ''' Edit a task's description.
 
         Takes a project name, task name, and task description.
         Only an authorized contributor can make changes, and 
@@ -199,7 +199,7 @@ def _edit_task(payload, signer, timestamp, state):
             "a task name must be provided")
     if not payload.description:
          raise InvalidTransaction(
-            'Task must have a description.'
+            'a description must be provided'
     )
     # verify transaction is signed by authorized key
     _verify_contributor(state,signer, payload.project_name)
@@ -258,44 +258,6 @@ def _add_user(payload, signer, timestamp, state):
     _set_container(state, project_node_address, project_node_container)
 
 
-def _remove_user(payload, signer, timestamp, state):
-    ''' Removes a public key from the list of authorized keys in the project metanode
-
-        Payload should include project name and the public key to be removed
-        Transaction must be signed by project owner (0th element of authorized keys list)
-    '''
-    # invalidate transactions with incomplete payloads
-    if not payload.project_name:
-        raise InvalidTransaction(
-            "a project name must be provided")
-    if not payload.public_key:
-        raise InvalidTransaction(
-            "a pk must be provided")
-    # check if transaction was signed using owner's public key
-    _verify_contributor(state,signer, payload.project_name)
-    # make project node address of given project name
-    project_node_address = addressing.make_project_node_address(payload.project_name)
-    # get project node container from state
-    project_node_container = _get_container(state, project_node_address)
-    project_node = None 
-    # find project with correct name
-    for entry in project_node_container.entries:
-        if entry.project_name == payload.project_name:
-            project_node = entry
-    # invalidate transactions that try to remove keys that are not in the list
-    # and transactions that try to remove the last key in the list
-    if not any(public_key == payload.public_key
-           for public_key in project_node.public_keys):
-        raise InvalidTransaction(
-                "This user's public key is not registered")
-    if len(project_node.public_keys) < 2:
-        raise InvalidTransaction(
-            "Cannot remove all public keys from a project")
-    # remove the key from the authorized keys list
-    project_node.public_keys.remove(payload.public_key)
-    # set the state with the new authorized keys list
-    _set_container(state, project_node_address, project_node_container)
-
 def _unpack_transaction(transaction, state):
     '''Return the transaction signing key, the SCPayload timestamp, the
     appropriate SCPayload action attribute, and the appropriate
@@ -318,7 +280,6 @@ def _unpack_transaction(transaction, state):
         Payload.PROGRESS_TASK: ('progress_task', _progress_task),
         Payload.EDIT_TASK: ('edit_task', _edit_task),
         Payload.ADD_USER: ('add_user', _add_user),
-        Payload.REMOVE_USER: ('remove_user', _remove_user),
     }
     try:
         # get the correct payload field and handler function from the action type

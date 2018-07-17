@@ -24,7 +24,6 @@ message Payload {
   ProgressTaskAction progress_task = 5;
   EditTaskAction edit_task = 6;
   AddUserAction add_user = 7;
-  RemoveUserAction remove_user = 8;
 }
 
 message CreateProjectAction {
