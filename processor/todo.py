@@ -48,9 +48,6 @@ class Todo():
         if not len(args) == 2: # make sure correct number of arguments are present for desired transaction
             print("\nIncorrect number of arguments for desired command.\n")
             quit()
-        #create signer using given private key
-        #private_key = args[0]
-        #signer = _create_signer(private_key)
         signer = args[0]
 
         # bundle the action information
@@ -80,10 +77,6 @@ class Todo():
         if not len(args) == 4: # make sure correct number of arguments are present for desired transaction
             print("\nIncorrect number of arguments for desired command.\n")
             quit()
-
-        #create signer using given private key
-        #private_key = args[0]
-        #signer = _create_signer(private_key)
         signer = args[0]
         # bundle the action information
         action = CreateTaskAction(
@@ -114,8 +107,6 @@ class Todo():
         if not len(args) == 3: # make sure correct number of arguments are present for desired transaction
             print("\nIncorrect number of arguments for desired command.\n")
             quit()
-
-        #create signer using given private key
         signer = args[0]
 
         # bundle the action information
@@ -146,8 +137,6 @@ class Todo():
         if not len(args) == 4: # make sure correct number of arguments are present for desired transaction
             print("\nIncorrect number of arguments for desired command.\n")
             quit()
-
-        #create signer using given private key
         signer = args[0]
         # bundle the action information
         action = EditTaskAction(
@@ -179,7 +168,6 @@ class Todo():
             print("\nIncorrect number of arguments for desired command.\n")
             quit()
 
-        #create signer using given private key
         signer = args[0]
 
         # bundle the action information
