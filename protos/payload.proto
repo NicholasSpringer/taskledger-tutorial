@@ -52,8 +52,3 @@ message AddUserAction {
   string project_name = 1;
   string public_key = 2;
 }
-
-message RemoveUserAction {
-  string project_name = 1;
-  string public_key = 2;
-}
