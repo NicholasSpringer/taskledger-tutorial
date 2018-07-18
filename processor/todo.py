@@ -298,7 +298,7 @@ class Todo():
             quit()
         #creates public key from password
         new_pass = args[2]
-        priv_key = hashlib.sha224(new_pass.encode('utf-8')).hexdigest()
+        priv_key = hashlib.sha256(new_pass.encode('utf-8')).hexdigest()
         args[2] = _create_signer(priv_key).pubkey.serialize().hex()
         self.add_user(args)
 
