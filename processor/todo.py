@@ -37,9 +37,6 @@ def _create_signer(private_key):
     
 
 class Todo():
-    def __init__(self):
-        self.txns = []
-
     def create_project(self, args):
         ''' Creates a transaction that includes a create_project payload
 
@@ -65,8 +62,8 @@ class Todo():
         payload_bytes = payload.SerializeToString()
 
         # Pack it all up and ship it out
-        self.create_transaction(signer, payload_bytes)
-        batch_list_bytes = self.create_batch(signer)
+        txn = self.create_transaction(signer, payload_bytes)
+        batch_list_bytes = self.create_batch(signer, txn)
         send_it(batch_list_bytes)
 
     def create_task(self, args):
@@ -95,8 +92,8 @@ class Todo():
         payload_bytes = payload.SerializeToString()
 
         # Pack it all up and ship it out
-        self.create_transaction(signer, payload_bytes)
-        batch_list_bytes = self.create_batch(signer)
+        txn = self.create_transaction(signer, payload_bytes)
+        batch_list_bytes = self.create_batch(signer, txn)
         send_it(batch_list_bytes)
 
     def progress_task(self, args):
@@ -125,8 +122,8 @@ class Todo():
         payload_bytes = payload.SerializeToString()
 
         # Pack it all up and ship it out
-        self.create_transaction(signer, payload_bytes)
-        batch_list_bytes = self.create_batch(signer)
+        txn = self.create_transaction(signer, payload_bytes)
+        batch_list_bytes = self.create_batch(signer, txn)
         send_it(batch_list_bytes)
 
     def edit_task(self, args):
@@ -155,8 +152,8 @@ class Todo():
         payload_bytes = payload.SerializeToString()
 
         # Pack it all up and ship it out
-        self.create_transaction(signer, payload_bytes)
-        batch_list_bytes = self.create_batch(signer)
+        txn = self.create_transaction(signer, payload_bytes)
+        batch_list_bytes = self.create_batch(signer, txn)
         send_it(batch_list_bytes)
 
     def add_user(self, args):
@@ -186,8 +183,8 @@ class Todo():
         payload_bytes = payload.SerializeToString()
 
         # Pack it all up and ship it out
-        self.create_transaction(signer, payload_bytes)
-        batch_list_bytes = self.create_batch(signer)
+        txn = self.create_transaction(signer, payload_bytes)
+        batch_list_bytes = self.create_batch(signer, txn)
         send_it(batch_list_bytes)
 
 
@@ -224,13 +221,13 @@ class Todo():
             payload=payload_bytes
         )
 
-        self.txns.append(txn)
+        return txn;
 
-    def create_batch(self, signer):
-        '''Bundles together a batch that includes self.txns and is signed by given signer'''
+    def create_batch(self, signer, txn):
+        '''Bundles together a batch that includes txn and is signed by given signer'''
         batch_header_bytes = BatchHeader(
             signer_public_key = signer.pubkey.serialize().hex(),
-            transaction_ids=[txn.header_signature for txn in self.txns],
+            transaction_ids=[txn.header_signature],
         ).SerializeToString()
 
         batch_signature = signer.ecdsa_sign(batch_header_bytes)
@@ -240,7 +237,7 @@ class Todo():
         batch = Batch(
             header=batch_header_bytes,
             header_signature=signature,
-            transactions=self.txns
+            transactions=[txn]
         )
 
         batch_list_bytes = BatchList(batches=[batch]).SerializeToString()
