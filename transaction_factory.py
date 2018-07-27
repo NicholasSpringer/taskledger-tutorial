@@ -32,7 +32,7 @@ def _create_signer(private_key):
     return signer
     
 
-class Todo():
+class Txn_Factory():
     def create_project(self, args):
         ''' Creates a transaction that includes a create_project payload
 

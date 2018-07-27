@@ -42,12 +42,12 @@ def send():
     if fields["new_password"]:
         args.append(request.form['new_password'])
 
-    to_do = Todo();
+    txn_factory = Txn_Factory();
     passcode = args[1]
     priv_key = hashlib.sha256(passcode.encode('utf-8')).hexdigest()
     args[1] = _create_signer(priv_key)
     # run desired function
-    getattr(to_do, args[0])(args[1:])
+    getattr(txn_factory, args[0])(args[1:])
     return redirect(url_for('render'))
 
 
@@ -79,7 +79,7 @@ def getProjectNode(state,project_name):
             return project_node
     return None
 
-def getTask(state,project_name,task_name):
+def getTask(state, project_name,task_name):
     ''' Given a project name and task name get a task node. '''
 
     # make address of task node
