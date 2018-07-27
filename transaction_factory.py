@@ -1,15 +1,8 @@
 import hashlib
-import subprocess
-import sys
 import secp256k1
 import base64
 import time
-import uuid
 import requests
-import json
-import random
-from random import randint
-import sys
 import urllib.request, json
 
 
@@ -23,13 +16,16 @@ from sawtooth_sdk.protobuf.batch_pb2 import BatchList
 from protobuf.payload_pb2 import *
 from protobuf.project_node_pb2 import *
 from protobuf.task_pb2 import *
-import addressing
+from addressing import *
+
 
 def _get_batcher_public_key(signer):
     return signer.pubkey.serialize().hex()
 
+
 def _get_time():
     return int(time.time())
+
 
 def _create_signer(private_key):
     signer = secp256k1.PrivateKey(privkey=bytes.fromhex(str(private_key)))
@@ -166,6 +162,9 @@ class Todo():
             quit()
 
         signer = args[0]
+        new_pass = args[2]
+        priv_key = hashlib.sha256(new_pass.encode('utf-8')).hexdigest()
+        args[2] = _create_signer(priv_key).pubkey.serialize().hex()
 
         # bundle the action information
         action = AddUserAction(
@@ -193,8 +192,8 @@ class Todo():
         txn_header_bytes = TransactionHeader(
             family_name='todo',
             family_version='0.1',
-            inputs=[addressing.NAMESPACE],
-            outputs=[addressing.NAMESPACE],
+            inputs=[NAMESPACE],
+            outputs=[NAMESPACE],
             signer_public_key = signer.pubkey.serialize().hex(),
             # In this example, we're signing the batch with the same private key,
             # but the batch can be signed by another party, in which case, the
@@ -244,49 +243,6 @@ class Todo():
         
         return batch_list_bytes
 
-    def print_project(self, args):
-        ''' Prints all information about a given project
-
-            args: [password (not validated; can be anything), project_name]
-        '''
-        if not len(args) == 2: # make sure correct number of arguments are present for desired transaction
-            print("\nIncorrect number of arguments for desired command.\n")
-            quit()
-        # queries state
-        with urllib.request.urlopen("http://localhost:8008/state") as url:
-            state = json.loads(url.read().decode())['data']
-        project_name = args[1]
-        # gets project node from state
-        project_node = getProjectNode(state,project_name)
-        print('+++++++++++++++++++++Project:' + project_name + '+++++++++++++++++++++')
-        print("<<<<<<<<<<<Public Keys:>>>>>>>>>>>>")
-        # print all authorized public keys
-        for public_key in project_node.public_keys:
-            print(public_key)
-        print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>")
-        for task_name in project_node.task_names:
-            task = getTask(state,project_name,task_name)
-            print("------------Task------------")
-            print("Task_name: " + task.task_name)
-            print('Description: ' + task.description)
-            print('Progress: ' + str(task.progress))
-            print('---------------------------')
-        print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-
-    def add_password(self, args):
-        ''' Takes authorized signer and new password to be added to auth users.
-            
-            args: [password (is a signer), new_password]
-        '''
-        if not len(args) == 3: # make sure correct number of arguments are present for desired transaction
-            print("\nIncorrect number of arguments for desired command.\n")
-            quit()
-        #creates public key from password
-        new_pass = args[2]
-        priv_key = hashlib.sha256(new_pass.encode('utf-8')).hexdigest()
-        args[2] = _create_signer(priv_key).pubkey.serialize().hex()
-        self.add_user(args)
-
 
 def send_it(batch_list_bytes):
     '''Sends batch to REST API where it'''
@@ -306,62 +262,3 @@ def send_it(batch_list_bytes):
         json_batch_status = json.loads(resp.text)
         status = json_batch_status["data"][0]["status"]
     print(status)
-
-def getProjectNode(state,project_name):
-    ''' Given a project name get a project node. '''
-
-    # make address of project metanode
-    project_node_address = addressing.make_project_node_address(project_name)
-    project_node_container = ProjectNodeContainer()
-    data = getData(state,project_node_address)
-    project_node_container.ParseFromString(data)  # decode data and store in container
-
-    for project_node in project_node_container.entries:  # find project with correct name
-        if project_node.project_name == project_name:
-            return project_node
-    return None
-
-def getTask(state,project_name,task_name):
-    ''' Given a project name and task name get a task node. '''
-
-    # make address of task node
-    task_address = addressing.make_task_address(project_name,task_name)
-    task_container = TaskContainer()
-    data = getData(state,task_address)
-    task_container.ParseFromString(data)  # decode data and store in container
-
-    for task in task_container.entries:  # find task with correct name
-        if task.task_name == task_name:
-            return task
-    return None
-
-
-def getData(state, address):
-    ''' Gets the data from a provided address.
-
-        State has two fields address and data.  We can create the
-        address using functions in addressing.py.  The data field
-        is encoded with base64 encoding.
-    '''
-
-    for location in state:
-        if location['address'] == address:
-            encoded_data = location['data']
-            return base64.b64decode(encoded_data)
-    return None
-
-
-
-#subprocess.run(["docker-compose", "-f" "../sawtooth-default.yaml", "up", "-d"])
-
-todo = Todo()
-
-args = sys.argv[1:]
-passcode = args[1]
-
-priv_key = hashlib.sha256(passcode.encode('utf-8')).hexdigest()
-args[1] = _create_signer(priv_key)
-# run desired function
-getattr(todo, args[0])(args[1:])
-
-#subprocess.run(["docker-compose", "-f" "../sawtooth-default.yaml", "down"])
