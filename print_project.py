@@ -47,31 +47,27 @@ def getData(state, address):
             return base64.b64decode(encoded_data)
     return None
 
-
-def print_project(self, args):
-    ''' Prints all information about a given project
-        args: [password (not validated; can be anything), project_name]
-    '''
-    if not len(args) == 2:  # make sure correct number of arguments are present for desired transaction
-        print("\nIncorrect number of arguments for desired command.\n")
-        quit()
-    # queries state
-    with urllib.request.urlopen("http://localhost:8008/state") as url:
-        state = json.loads(url.read().decode())['data']
-    project_name = args[1]
-    # gets project node from state
-    project_node = getProjectNode(state, project_name)
-    print('+++++++++++++++++++++Project:' + project_name + '+++++++++++++++++++++')
-    print("<<<<<<<<<<<Public Keys:>>>>>>>>>>>>")
-    # print all authorized public keys
-    for public_key in project_node.public_keys:
-        print(public_key)
-    print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>")
-    for task_name in project_node.task_names:
-        task = getTask(state, project_name, task_name)
-        print("------------Task------------")
-        print("Task_name: " + task.task_name)
-        print('Description: ' + task.description)
-        print('Progress: ' + str(task.progress))
-        print('---------------------------')
-    print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+args = sys.argv[1:]
+if not len(args) == 1:  # make sure correct number of arguments are present
+    print("\nIncorrect number of arguments for desired command.\n")
+    quit()
+# queries state
+with urllib.request.urlopen("http://localhost:8008/state") as url:
+    state = json.loads(url.read().decode())['data']
+project_name = args[0]
+# gets project node from state
+project_node = getProjectNode(state, project_name)
+print('+++++++++++++++++++++Project:' + project_name + '+++++++++++++++++++++')
+print("<<<<<<<<<<<Public Keys:>>>>>>>>>>>>")
+# print all authorized public keys
+for public_key in project_node.public_keys:
+    print(public_key)
+print("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>")
+for task_name in project_node.task_names:
+    task = getTask(state, project_name, task_name)
+    print("------------Task------------")
+    print("Task_name: " + task.task_name)
+    print('Description: ' + task.description)
+    print('Progress: ' + str(task.progress))
+    print('---------------------------')
+print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
