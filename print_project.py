@@ -52,7 +52,7 @@ if not len(args) == 1:  # make sure correct number of arguments are present
     print("\nIncorrect number of arguments for desired command.\n")
     quit()
 # queries state
-with urllib.request.urlopen("http://localhost:8008/state") as url:
+with urllib.request.urlopen("http://bc.oregonctf.org:8008/state") as url:
     state = json.loads(url.read().decode())['data']
 project_name = args[0]
 # gets project node from state
