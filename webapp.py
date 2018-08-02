@@ -1,6 +1,8 @@
 from flask import Flask, redirect, request, url_for, render_template
-from transaction_factory import *
-from transaction_factory import _create_signer
+from protobuf.payload_pb2 import *
+from protobuf.project_node_pb2 import *
+import transaction_factory
+
 
 app = Flask(__name__)
 action = 'create_project'
