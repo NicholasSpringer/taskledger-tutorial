@@ -69,7 +69,7 @@ def getProjectNode(state,project_name):
     ''' Given a project name get a project node. '''
 
     # make address of project metanode
-    project_node_address = make_project_node_address(project_name)
+    project_node_address = addressing.make_project_node_address(project_name)
     project_node_container = ProjectNodeContainer()
     data = getData(state,project_node_address)
     project_node_container.ParseFromString(data)  # decode data and store in container
@@ -83,7 +83,7 @@ def getTask(state, project_name,task_name):
     ''' Given a project name and task name get a task node. '''
 
     # make address of task node
-    task_address = make_task_address(project_name, task_name)
+    task_address = addressing.make_task_address(project_name, task_name)
     task_container = TaskContainer()
     data = getData(state,task_address)
     task_container.ParseFromString(data)  # decode data and store in container
