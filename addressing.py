@@ -12,7 +12,17 @@ TODO_TASK = '02'
 
 
 def make_task_address(project_name,task_name):
-    pass
+    return (
+            NAMESPACE
+            + TODO_TASK
+            + _hash(project_name)[:47]
+            + _hash(task_name)[:15]
+    )
 
 def make_project_node_address(project_name):
-    pass
+    return (
+            NAMESPACE
+            + PROJECT_METANODE
+            + _hash(project_name)[:47]
+            + ('0' * 15)
+    )

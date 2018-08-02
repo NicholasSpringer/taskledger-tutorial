@@ -2,7 +2,7 @@ import addressing
 from protobuf.task_pb2 import *
 from protobuf.project_node_pb2 import *
 import base64
-import urllib
+import requests
 import json
 
 def getProjectNode(state,project_name):
@@ -42,6 +42,8 @@ def getData(state, address):
     '''
 
     for location in state:
+        print(location)
+        print(address)
         if location['address'] == address:
             encoded_data = location['data']
             return base64.b64decode(encoded_data)
@@ -52,8 +54,8 @@ if not len(args) == 1:  # make sure correct number of arguments are present
     print("\nIncorrect number of arguments for desired command.\n")
     quit()
 # queries state
-with urllib.request.urlopen("http://bc.oregonctf.org:8008/state") as url:
-    state = json.loads(url.read().decode())['data']
+resp = requests.get("http://bc.oregonctf.org:8008/state")
+state = json.loads(resp.text)['data']
 project_name = args[0]
 # gets project node from state
 project_node = getProjectNode(state, project_name)
