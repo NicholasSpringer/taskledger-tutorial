@@ -12,7 +12,7 @@ from protobuf.payload_pb2 import *
 from protobuf.project_node_pb2 import *
 
 # Skltn addressing specs
-from addressing import *
+import addressing
 
 LOGGER = logging.getLogger(__name__)
 
