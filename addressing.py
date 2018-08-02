@@ -12,10 +12,7 @@ TODO_TASK = '02'
 
 
 def make_task_address(project_name,task_name):
-
+    pass
 
 def make_project_node_address(project_name):
-
-
-
-
+    pass

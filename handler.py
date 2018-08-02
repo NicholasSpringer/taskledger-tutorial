@@ -57,7 +57,7 @@ def _create_project(payload, signer, timestamp, state):
         that name, and the txn family.  A project name must be unique, the 
         txn will fail if it is not.  
     '''
-
+    pass
 
 
 def _create_task(payload, signer, timestamp, state):
@@ -67,7 +67,7 @@ def _create_task(payload, signer, timestamp, state):
         name and the task name. Each task name must be unique in the
         project.
     '''
-
+    pass
 
 
 def _progress_task(payload, signer, timestamp, state):
@@ -78,7 +78,7 @@ def _progress_task(payload, signer, timestamp, state):
         task's stage from its current stage to the next if possible.
         It is not possible to progress beyond DONE. 
     '''
-
+    pass
 
 
 def _edit_task(payload, signer, timestamp, state):
@@ -88,7 +88,7 @@ def _edit_task(payload, signer, timestamp, state):
         Only an authorized contributor can make changes, and 
         the project/task must exist.
     '''
-
+    pass
 
 
 def _add_user(payload, signer, timestamp, state):
@@ -97,7 +97,7 @@ def _add_user(payload, signer, timestamp, state):
         Payload should include project name and the new public key
         Transaction must be signed by project owner (0th element of authorized keys list)
     '''
-
+    pass
 
 
 def _unpack_transaction(transaction, state):
@@ -106,23 +106,23 @@ def _unpack_transaction(transaction, state):
     handler function (with the latter two determined by the constant
     TYPE_TO_ACTION_HANDLER table.
     '''
-
+    pass
 
 
 
 def _get_container(state, address):
     '''Returns the container at a given address from state'''
-
+    pass
 
 
 def _set_container(state, address, container):
     '''Sets the state at a certain address to a given container'''
-
+    pass
 
 
 def _get_project_node(state, project_name):
     '''Returns project metanode of give project name'''
-
+    pass
 
 
 def _verify_contributor(state, signer, project_name):
@@ -132,3 +132,4 @@ def _verify_contributor(state, signer, project_name):
         and the name of the project to check.
         Invalidates the transaction if the public key is not authorized.
     '''
+    pass

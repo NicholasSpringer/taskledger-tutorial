@@ -38,48 +38,49 @@ class Txn_Factory():
 
             args: [password/signer, project_name]
         '''
-
+        pass
 
     def create_task(self, args):
         ''' Creates a transaction that includes a create_task payload
 
             args: [password/signer, project_name, task_name, description]
         '''
-
+        pass
 
     def progress_task(self, args):
         ''' Creates a transaction that includes a progress_task payload
 
             args: [password/signer, project_name, task_name]
         '''
-
+        pass
 
     def edit_task(self, args):
         ''' Creates a transaction that includes a create_project payload
 
             args: [password/signer, project_name, task_name, description]
         '''
-
+        pass
 
     def add_user(self, args):
         ''' Creates a transaction that includes an add_user payload
 
             args: [password/signer, project_name, password]
         '''
-
+        pass
 
 
     def create_transaction(self, signer, payload_bytes):
         '''Bundles together a transaction that includes the given payload and is signed by given signer'''
-
+        pass
 
     def create_batch(self, signer, txn):
         '''Bundles together a batch that includes txn and is signed by given signer'''
-
+        pass
 
 
 def send_it(batch_list_bytes):
     '''Sends batch to REST API where it'''
+    pass
 
 txn_factory = Txn_Factory()
 

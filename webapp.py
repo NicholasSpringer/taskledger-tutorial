@@ -11,29 +11,29 @@ tasks = []
 
 @app.route('/')
 def render():
-
+    pass
 
 @app.route('/changeaction',methods=['POST'])
 def change_action():
-
+    pass
 
 @app.route('/send', methods=['POST'])
 def send():
-
+    pass
 
 
 @app.route('/viewproject',methods=['POST'])
 def view_project():
-
+    pass
 
 
 def getProjectNode(state,project_name):
     ''' Given a project name get a project node. '''
-
+    pass
 
 def getTask(state, project_name,task_name):
     ''' Given a project name and task name get a task node. '''
-
+    pass
 
 
 def getData(state, address):
@@ -43,7 +43,7 @@ def getData(state, address):
         address using functions in addressing.py.  The data field
         is encoded with base64 encoding.
     '''
-
+    pass
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=80)
