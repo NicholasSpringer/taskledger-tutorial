@@ -12,7 +12,7 @@ from protobuf.payload_pb2 import *
 from protobuf.project_node_pb2 import *
 
 # Skltn addressing specs
-from addressing import *
+import addressing
 
 LOGGER = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ LOGGER = logging.getLogger(__name__)
 class TodoTransactionHandler(TransactionHandler):
     @property
     def family_name(self):
-        return FAMILY_NAME
+        return addressing.FAMILY_NAME
 
     @property
     def family_versions(self):
@@ -28,7 +28,7 @@ class TodoTransactionHandler(TransactionHandler):
 
     @property
     def namespaces(self):
-        return [NAMESPACE]
+        return [addressing.NAMESPACE]
 
     def apply(self, transaction, state):
         '''
@@ -62,7 +62,7 @@ def _create_project(payload, signer, timestamp, state):
         raise InvalidTransaction(
             "Project must have a name")
 
-    project_address = make_project_node_address(payload.project_name)
+    project_address = addressing.make_project_node_address(payload.project_name)
     project_container = _get_container(state,project_address)
 
     if not project_container: # if no container exists, create one
@@ -106,7 +106,7 @@ def _create_task(payload, signer, timestamp, state):
     _verify_contributor(state, signer, payload.project_name)
 
     # find address of project metanode
-    project_node_address = make_project_node_address(payload.project_name)
+    project_node_address = addressing.make_project_node_address(payload.project_name)
     # get container of project metanode
     project_node_container = _get_container(state, project_node_address)
     # find the correct project metanode
@@ -129,7 +129,7 @@ def _create_task(payload, signer, timestamp, state):
         timestamp = timestamp)
  
     # make the task address
-    task_address = make_task_address(payload.project_name, payload.task_name)
+    task_address = addressing.make_task_address(payload.project_name, payload.task_name)
     # get the container of tasks at the address
     task_container = _get_container(state, task_address)
     # add the task to the container
@@ -157,7 +157,7 @@ def _progress_task(payload, signer, timestamp, state):
     _verify_contributor(state,signer, payload.project_name)
 
     # make task address
-    task_address = make_task_address(payload.project_name, payload.task_name)
+    task_address = addressing.make_task_address(payload.project_name, payload.task_name)
     # get the container with tasks at this address
     task_container = _get_container(state, task_address)
     # check if it doesn't exist
@@ -202,7 +202,7 @@ def _edit_task(payload, signer, timestamp, state):
     # verify transaction is signed by authorized key
     _verify_contributor(state,signer, payload.project_name)
     # make task address
-    task_address = make_task_address(payload.project_name, payload.task_name)
+    task_address = addressing.make_task_address(payload.project_name, payload.task_name)
     # get the container with tasks at this address
     task_container = _get_container(state,task_address)
     # check if it doesn't exist
@@ -237,7 +237,7 @@ def _add_user(payload, signer, timestamp, state):
     # check if transaction was signed using owner's public key
     _verify_contributor(state,signer, payload.project_name)
     # make project node address of given project name
-    project_node_address = make_project_node_address(payload.project_name)
+    project_node_address = addressing.make_project_node_address(payload.project_name)
     # get project node container from state
     project_node_container = _get_container(state, project_node_address)
     project_node = None
@@ -298,8 +298,8 @@ def _get_container(state, address):
     tag = address[6:8]
     # translate the tag bits to the correct type of container for the node
     containers = {
-        PROJECT_METANODE : ProjectNodeContainer,
-        TODO_TASK : TaskContainer,
+        addressing.PROJECT_METANODE : ProjectNodeContainer,
+        addressing.TODO_TASK : TaskContainer,
     }
     # initialize the correct type of container based on
     container = containers[tag]()
@@ -330,7 +330,7 @@ def _set_container(state, address, container):
 def _get_project_node(state, project_name):
     '''Returns project metanode of give project name'''
     # make address of project metanode
-    project_node_address = make_project_node_address(project_name)
+    project_node_address = addressing.make_project_node_address(project_name)
     # pull the project metanode container from this address
     project_container = _get_container(state, project_node_address)
     # find metanode with correct project name and return it
