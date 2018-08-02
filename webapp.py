@@ -1,6 +1,12 @@
 from flask import Flask, redirect, request, url_for, render_template
-from transaction_factory import *
-from transaction_factory import _create_signer
+import transaction_factory
+from protobuf.project_node_pb2 import *
+from protobuf.task_pb2 import *
+import addressing
+import hashlib
+import requests
+import json
+import base64
 
 app = Flask(__name__)
 action = 'create_project'
@@ -42,10 +48,10 @@ def send():
     if fields["new_password"]:
         args.append(request.form['new_password'])
 
-    txn_factory = Txn_Factory();
+    txn_factory = transaction_factory.Txn_Factory();
     passcode = args[1]
     priv_key = hashlib.sha256(passcode.encode('utf-8')).hexdigest()
-    args[1] = _create_signer(priv_key)
+    args[1] = transaction_factory._create_signer(priv_key)
     # run desired function
     getattr(txn_factory, args[0])(args[1:])
     return redirect(url_for('render'))
@@ -54,8 +60,8 @@ def send():
 @app.route('/viewproject',methods=['POST'])
 def view_project():
     project_name = request.form['project_name']
-    with urllib.request.urlopen("http://localhost:8008/state") as url:
-        state = json.loads(url.read().decode())['data']
+    resp = requests.get("http://bc.oregonctf.org:8008/state")
+    state = json.loads(resp.text)['data']
     global project_node
     global tasks
     tasks = []
