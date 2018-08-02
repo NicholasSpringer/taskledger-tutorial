@@ -16,7 +16,6 @@ from sawtooth_sdk.protobuf.batch_pb2 import BatchList
 from protobuf.payload_pb2 import *
 from protobuf.project_node_pb2 import *
 from protobuf.task_pb2 import *
-from addressing import *
 
 
 def _get_batcher_public_key(signer):
