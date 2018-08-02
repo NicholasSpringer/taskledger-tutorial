@@ -20,7 +20,7 @@ LOGGER = logging.getLogger(__name__)
 class TodoTransactionHandler(TransactionHandler):
     @property
     def family_name(self):
-        return FAMILY_NAME
+        return addressing.FAMILY_NAME
 
     @property
     def family_versions(self):
@@ -28,7 +28,7 @@ class TodoTransactionHandler(TransactionHandler):
 
     @property
     def namespaces(self):
-        return [NAMESPACE]
+        return [addressing.NAMESPACE]
 
     def apply(self, transaction, state):
         '''
