@@ -16,7 +16,7 @@ from sawtooth_sdk.protobuf.batch_pb2 import BatchList
 from protobuf.payload_pb2 import *
 from protobuf.project_node_pb2 import *
 from protobuf.task_pb2 import *
-from addressing import *
+import addressing
 
 
 def _get_batcher_public_key(signer):
@@ -192,8 +192,8 @@ class Txn_Factory():
         txn_header_bytes = TransactionHeader(
             family_name='todo',
             family_version='0.1',
-            inputs=[NAMESPACE],
-            outputs=[NAMESPACE],
+            inputs=[addressing.NAMESPACE],
+            outputs=[addressing.NAMESPACE],
             signer_public_key = signer.pubkey.serialize().hex(),
             # In this example, we're signing the batch with the same private key,
             # but the batch can be signed by another party, in which case, the
