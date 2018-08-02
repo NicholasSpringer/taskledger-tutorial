@@ -17,6 +17,7 @@ from protobuf.payload_pb2 import *
 from protobuf.project_node_pb2 import *
 from protobuf.task_pb2 import *
 
+import addressing
 
 def _get_batcher_public_key(signer):
     return signer.pubkey.serialize().hex()
