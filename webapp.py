@@ -1,12 +1,16 @@
-from flask import Flask, redirect, request, url_for, render_template
-import transaction_factory
-from protobuf.project_node_pb2 import *
-from protobuf.task_pb2 import *
-import addressing
 import hashlib
 import requests
 import json
 import base64
+
+from flask import Flask, redirect, request, url_for, render_template
+
+from protobuf.project_node_pb2 import *
+from protobuf.task_pb2 import *
+
+import transaction_factory
+import addressing
+
 
 app = Flask(__name__)
 action = 'create_project'
