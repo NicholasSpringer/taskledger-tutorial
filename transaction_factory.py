@@ -78,12 +78,13 @@ def send_it(batch_list_bytes):
     '''Sends batch to REST API where it'''
     pass
 
-txn_factory = Txn_Factory()
+if __name__ == '__main__':
+    txn_factory = Txn_Factory()
 
-args = sys.argv[1:]
-passcode = args[1]
+    args = sys.argv[1:]
+    passcode = args[1]
 
-priv_key = hashlib.sha256(passcode.encode('utf-8')).hexdigest()
-args[1] = _create_signer(priv_key)
-# run desired function
-getattr(txn_factory, args[0])(args[1:])
+    priv_key = hashlib.sha256(passcode.encode('utf-8')).hexdigest()
+    args[1] = _create_signer(priv_key)
+    # run desired function
+    getattr(txn_factory, args[0])(args[1:])
