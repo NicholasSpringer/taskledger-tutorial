@@ -259,3 +259,14 @@ def send_it(batch_list_bytes):
         json_batch_status = json.loads(resp.text)
         status = json_batch_status["data"][0]["status"]
     print(status)
+
+if __name__ == '__main__':
+    txn_factory = Txn_Factory()
+
+    args = sys.argv[1:]
+    passcode = args[1]
+
+    priv_key = hashlib.sha256(passcode.encode('utf-8')).hexdigest()
+    args[1] = _create_signer(priv_key)
+    # run desired function
+    getattr(txn_factory, args[0])(args[1:])
