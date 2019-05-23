@@ -119,17 +119,31 @@ def _set_container(state, address, container):
     '''Sets the state at a certain address to a given container'''
     pass
 
-
 def _get_project_node(state, project_name):
     '''Returns project metanode of give project name'''
-    pass
+    # make address of project metanode
+    project_node_address = addressing.make_project_node_address(project_name)
+    # pull the project metanode container from this address
+    project_container = _get_container(state, project_node_address)
+    # find metanode with correct project name and return it
+    for project_node in project_container.entries: #find project with correct name
+        if project_node.project_name == project_name:
+            return project_node 
+    # in the case that no project of this name exists, invalidate the transaction
+    raise InvalidTransaction(
+        "This project does not exist")
 
 
 def _verify_contributor(state, signer, project_name):
     ''' Checks to see if a public key belongs to an authorized contributor of the project.
-
         Takes the state provided from the apply function, the public key of the signer,
         and the name of the project to check.
         Invalidates the transaction if the public key is not authorized.
     '''
-    pass
+    # get list of authorized contributor public keys from project node
+    auth_keys = _get_project_node(state,project_name).public_keys
+    # checks if the public key of the signer is in the list
+    # of authorized keys
+    if not any(signer == key for key in auth_keys):
+        raise InvalidTransaction(
+            'Signer not authorized as a contributor')
