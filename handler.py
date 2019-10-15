@@ -43,7 +43,6 @@ class TodoTransactionHandler(TransactionHandler):
         '''
         # TO DO : check that timestamp is valid before calling handler.
         signer, timestamp, payload, handler = _unpack_transaction(transaction, state)
-
         # note that handler will be chosen by what was given to unpack
         handler(payload, signer, timestamp, state)
 
@@ -283,7 +282,8 @@ def _unpack_transaction(transaction, state):
         # get the correct payload field and handler function from the action type
         attribute, handler = TYPE_TO_ACTION_HANDLER[action]
     except KeyError:
-        raise Exception('Specified action is invalid')
+        raise InvalidTransaction('Specified action is invalid')
+
     # extract the correct payload based on the action type
     payload = getattr(payload_wrapper, attribute)
     # go back to apply
